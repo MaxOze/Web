@@ -4,14 +4,11 @@ import javax.persistence.*;
 
 
 @Entity
+@Table(name="book")
 public class Book {
     @Id
-    @GeneratedValue(strategy=GenerationType.AUTO)
+    @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
-
-    public Integer getId() {
-        return id;
-    }
 
     public Book() { }
 
@@ -25,6 +22,9 @@ public class Book {
     private String author;
     private Integer price;
 
+    public Integer getId() {
+        return id;
+    }
 
     public void setId(Integer id) {
         this.id = id;
