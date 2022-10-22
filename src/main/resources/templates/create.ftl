@@ -1,10 +1,6 @@
 <#import "parts/base.ftl" as b>
+<#import "parts/forms.ftl" as forms>
 
-<@b.base title="Add book">
-    <form method="post">
-        <div><label>Book name: <input type="text" name="name"></label></div>
-        <div><label>Book author: <input type="text" name="author"></label></div>
-        <div><label>Book price: <input type="number" name="price"></label></div>
-        <div><input type="submit" value="Add book"></div>
-    </form>
+<@b.base title="Add book" session=session>
+        <@forms.bookForm value=book button="Add book" />
 </@b.base>
