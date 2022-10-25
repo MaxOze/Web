@@ -1,13 +1,19 @@
 package com.example.web.controllers;
 
-import com.example.web.entities.User;
+import com.example.web.entities.Book;
+import com.example.web.entities.Cart;
+import com.example.web.entities.Usr;
+import com.example.web.repos.CartRepo;
 import com.example.web.repos.RoleRepo;
 import com.example.web.repos.UserRepo;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import javax.servlet.http.HttpSession;
@@ -17,15 +23,22 @@ public class UsersController {
 
     private final UserRepo userRepo;
     private final RoleRepo roleRepo;
+    private final CartRepo cartRepo;
 
-    public UsersController(UserRepo userRepo, RoleRepo roleRepo) {
+    public UsersController(UserRepo userRepo, RoleRepo roleRepo, CartRepo cartRepo) {
         this.userRepo = userRepo;
         this.roleRepo = roleRepo;
+        this.cartRepo = cartRepo;
+    }
+
+    @GetMapping("/")
+    public String start() {
+        return "redirect:/signin";
     }
 
     @GetMapping("/signin")
     public String signInForm(Map<String, Object> model, HttpSession session) {
-        if (session.getAttribute("role") == null)
+        if (session.getAttribute("role") != null)
             return "redirect:/shop?page=1";
 
         model.put("session", session);
@@ -37,13 +50,20 @@ public class UsersController {
     public String signIn(@RequestParam String login,
                          @RequestParam String password,
                          HttpSession session, Map<String, Object> model) {
-        Optional<User> result = userRepo.findByLogin(login);
+        Optional<Usr> result = userRepo.findByLogin(login);
         if (result.isPresent()) {
-            User user = result.get();
-            if (user.getPassword().equals(password)) {
-                  session.setMaxInactiveInterval(900);
-                  session.setAttribute("name", user.getFirstname());
-                  session.setAttribute("role", user.getRoleName());
+            Usr usr = result.get();
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            if (encoder.matches(password, usr.getPassword())) {
+                session.setMaxInactiveInterval(900);
+                session.setAttribute("name", usr.getFirstname());
+                session.setAttribute("role", usr.getRoleName());
+
+                Optional<Cart> cart = cartRepo.findByUserName(usr.getFirstname());
+                if (cart.isPresent())
+                    session.setAttribute("cart", new ArrayList<Book>(cart.get().getBooks_id()));
+                else
+                    session.setAttribute("cart", new ArrayList<Book>());
 
                 return "redirect:/shop?page=1";
             }
@@ -56,13 +76,13 @@ public class UsersController {
 
     @GetMapping("/signup")
     public String signUpForm(Map<String, Object> model, HttpSession session) {
-        if (session.getAttribute("role") == null)
+        if (session.getAttribute("role") != null)
             return "redirect:/shop?page=1";
 
-        User user = new User();
-        user.setFirstname("");
-        user.setEmail("");
-        model.put("user", user);
+        Usr usr = new Usr();
+        usr.setFirstname("");
+        usr.setEmail("");
+        model.put("usr", usr);
         model.put("session", session);
 
         return "user/signup";
@@ -74,23 +94,79 @@ public class UsersController {
                          @RequestParam String login,
                          @RequestParam String password,
                          Map<String, Object> model, HttpSession session) {
-        Optional<User> result = userRepo.findByLogin(login);
+        Optional<Usr> result = userRepo.findByLogin(login);
         if (result.isPresent()) {
+            Usr usr = new Usr();
+            usr.setFirstname("");
+            usr.setEmail("");
+            model.put("usr", usr);
             model.put("session", session);
             return "user/signup";
         }
 
-        User user = new User(firstname, email, login, password, roleRepo.findById(1).get());
-        userRepo.save(user);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        Usr usr = new Usr(firstname, email, login, encoder.encode(password), roleRepo.findById(1).get());
+        userRepo.save(usr);
 
         return "redirect:/signin";
     }
 
     @GetMapping("/logout")
     public String signOut(HttpSession session) {
-        if (session.getAttribute("role") != null)
+        if (session.getAttribute("role") != null) {
+            String name = (String) session.getAttribute("name");
+            Optional<Cart> cart = cartRepo.findByUserName(name);
+
+            if (cart.isPresent()) {
+                Cart editCart = cart.get();
+                editCart.setBooks_id((List<Book>) session.getAttribute("cart"));
+                cartRepo.save(editCart);
+            }
+            else {
+                Cart newCart = new Cart(name, (List<Book>) session.getAttribute("cart"));
+                cartRepo.save(newCart);
+            }
+
             session.invalidate();
+        }
 
         return "redirect:/signin";
+    }
+
+    @GetMapping("/profile")
+    public String profileForm(Map<String, Object> model, HttpSession session) {
+        if (session.getAttribute("role") == null)
+            return "redirect:/signin";
+
+        String name = (String) session.getAttribute("name");
+        Optional<Usr> user = userRepo.findByFirstname(name);
+
+        model.put("session", session);
+        model.put("usr", user.get());
+        model.put("message", "");
+
+        return "profile/profile";
+    }
+
+    @PostMapping("/profile")
+    public String profile(@RequestParam String firstname,
+                          @RequestParam String email,
+                          Map<String, Object> model, HttpSession session) {
+        if (session.getAttribute("role") == null)
+            return "redirect:/signin";
+
+        String name = (String) session.getAttribute("name");
+        Optional<Usr> user = userRepo.findByFirstname(name);
+        Usr usr = user.get();
+        usr.setFirstname(firstname);
+        usr.setEmail(email);
+        userRepo.save(usr);
+        session.setAttribute("name", firstname);
+
+        model.put("session", session);
+        model.put("usr", usr);
+        model.put("message", "Changes saved!");
+
+        return "profile/profile";
     }
 }
