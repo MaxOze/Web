@@ -1,0 +1,78 @@
+html,
+body {
+    height: 100%;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 360px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-signin .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-signin input[type="text"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin input[type="password"] {
+    margin-bottom: 10px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.form-signup {
+    width: 100%;
+    max-width: 360px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-signup .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-signup input[type="text"] {
+    margin-bottom: 10px;
+}
+
+.form-signup input[type="email"] {
+    margin-bottom: 10px;
+}
+
+.form-signup input[type="password"] {
+    margin-bottom: 10px;
+}
+
+.form-signup input[type="number"] {
+    margin-bottom: 10px;
+}
+
+.form-book {
+    width: 100%;
+    max-width: 360px;
+    padding: 15px;
+    margin: auto;
+}
+
+.form-book .form-floating:focus-within {
+    z-index: 2;
+}
+
+.form-book input[type="text"] {
+    margin-bottom: 10px;
+}
+
+.form-book input[type="number"] {
+    margin-bottom: 10px;
+}
+
+.tocart {
+    opacity: 0;
+    max-width: 10px;
+}
