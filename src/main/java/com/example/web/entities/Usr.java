@@ -1,26 +1,29 @@
 package com.example.web.entities;
 
+import com.example.web.repos.OrderRepo;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
-@Table(name="usr")
-public class User {
+public class Usr {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
+    private Integer usr_id;
 
     private String firstname;
 
     private String email;
     private String login;
     private String password;
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(referencedColumnName="role_id")
+    @ManyToOne
     private Role role_name;
+    @OneToMany
+    private Set<BookOrder> orders;
 
-    public User() { }
+    public Usr() { }
 
-    public User(String firstname, String email, String login, String password, Role role_name) {
+    public Usr(String firstname, String email, String login, String password, Role role_name) {
         this.firstname = firstname;
         this.email = email;
         this.login = login;
@@ -32,12 +35,12 @@ public class User {
         return role_name.getName();
     }
 
-    public Integer getId() {
-        return id;
+    public Integer getUsr_id() {
+        return usr_id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setUsr_id(Integer id) {
+        this.usr_id = id;
     }
 
     public String getFirstname() {
@@ -78,5 +81,13 @@ public class User {
 
     public void setRole(Role role) {
         this.role_name = role;
+    }
+
+    public Set<BookOrder> getOrders() {
+        return orders;
+    }
+
+    public void setOrders(Set<BookOrder> orders) {
+        this.orders = orders;
     }
 }

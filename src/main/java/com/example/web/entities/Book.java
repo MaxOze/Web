@@ -1,6 +1,7 @@
 package com.example.web.entities;
 
 import javax.persistence.*;
+import java.util.List;
 
 
 @Entity
@@ -8,7 +9,10 @@ import javax.persistence.*;
 public class Book {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Integer id;
+    private Integer book_id;
+    private String name;
+    private String author;
+    private Integer price;
 
     public Book() { }
 
@@ -18,16 +22,12 @@ public class Book {
         this.price = price;
     }
 
-    private String name;
-    private String author;
-    private Integer price;
-
-    public Integer getId() {
-        return id;
+    public Integer getBook_id() {
+        return book_id;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setBook_id(Integer id) {
+        this.book_id = id;
     }
 
     public String getName() {
