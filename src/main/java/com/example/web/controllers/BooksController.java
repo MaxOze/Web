@@ -2,7 +2,6 @@ package com.example.web.controllers;
 
 import com.example.web.entities.Book;
 import com.example.web.repos.BookRepo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
@@ -22,15 +21,10 @@ public class BooksController {
         this.bookRepo = bookRepo;
     }
 
-    @GetMapping("/")
-    public String start() {
-        return "redirect:/signin";
-    }
-
     @GetMapping("/shop")
     public String mainPage(@RequestParam Integer page,
                            HttpSession session, Map<String, Object> model) {
-        Pageable paginator = PageRequest.of(page-1, 5);
+        Pageable paginator = PageRequest.of(page - 1, 5);
 
         Iterable<Book> books = bookRepo.findAll(paginator);
 
@@ -46,8 +40,8 @@ public class BooksController {
             count = count / 5;
 
         List<Integer> pages = new ArrayList<>();
-        for(int i = 0; i < count; i++)
-            pages.add(i+1);
+        for (int i = 0; i < count; i++)
+            pages.add(i + 1);
 
         model.put("books", books);
         model.put("pages", pages);
@@ -56,6 +50,20 @@ public class BooksController {
         model.put("session", session);
 
         return "main";
+    }
+
+    @PostMapping("/shop")
+    public String toCart(@RequestParam String name,
+                         @RequestParam Integer page,
+                         HttpSession session, Map<String, Object> model) {
+        Optional<Book> book = bookRepo.findByName(name);
+        List<Book> cart = (List<Book>) session.getAttribute("cart");
+        if (book.isPresent()) {
+            cart.add(book.get());
+            session.setAttribute("cart", cart);
+        }
+
+        return "redirect:/shop?page="+page;
     }
 
     @GetMapping("/create")
@@ -70,7 +78,7 @@ public class BooksController {
         model.put("book", book);
         model.put("session", session);
 
-        return "create";
+        return "book/create";
     }
 
     @PostMapping("/create")
@@ -86,16 +94,16 @@ public class BooksController {
     }
 
     @GetMapping("/edit")
-    public String editBookForm(@RequestParam Integer id,
+    public String editBookForm(@RequestParam Integer book_id,
                                Map<String, Object> model, HttpSession session) {
-        if (session.getAttribute("role") == "superuser") {
-            Optional<Book> book = bookRepo.findById(id);
+        if (session.getAttribute("role").equals("superuser")) {
+            Optional<Book> book = bookRepo.findById(book_id);
 
             if (book.isPresent()) {
                 model.put("book", book.get());
                 model.put("session", session);
 
-                return "edit";
+                return "book/edit";
             }
         }
 
@@ -103,12 +111,12 @@ public class BooksController {
     }
 
     @PostMapping("/edit")
-    public String editBook(@RequestParam Integer id,
+    public String editBook(@RequestParam Integer book_id,
                            @RequestParam String name,
                            @RequestParam String author,
                            @RequestParam Integer price,
                            Map<String, Object> model, HttpSession session) {
-        Book book = bookRepo.findById(id).get();
+        Book book = bookRepo.findById(book_id).get();
         book.setName(name);
         book.setAuthor(author);
         book.setPrice(price);
@@ -118,9 +126,9 @@ public class BooksController {
         return "redirect:/shop?page=1";
     }
 
-    @GetMapping("/delete")
-    public String deleteBook(@RequestParam Integer id, HttpSession session) {
-        if (session.getAttribute("role") == "superuser")
+    @GetMapping("/delete/{id}")
+    public String deleteBook(@PathVariable("id") Integer id, HttpSession session) {
+        if (session.getAttribute("role").equals("superuser"))
             if (bookRepo.findById(id).isPresent())
                 bookRepo.deleteById(id);
 
