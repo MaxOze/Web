@@ -6,11 +6,12 @@ import com.example.web.entities.Usr;
 import com.example.web.repos.CartRepo;
 import com.example.web.repos.RoleRepo;
 import com.example.web.repos.UserRepo;
+import com.example.web.util.Input;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -111,7 +112,17 @@ public class UsersController {
         return "redirect:/signin";
     }
 
-    @GetMapping("/logout")
+    @PostMapping("/signup/check")
+    public ResponseEntity<Usr> getUser(@RequestBody Input loginInput) {
+        Optional<Usr> usr = userRepo.findByLogin(loginInput.getInput());
+
+        if(usr.isPresent())
+            return new ResponseEntity<>(usr.get(), HttpStatus.OK);
+
+        throw new RuntimeException("No user available for the given user name");
+    }
+
+    @GetMapping("/logoutuser")
     public String signOut(HttpSession session) {
         if (session.getAttribute("role") != null) {
             String name = (String) session.getAttribute("name");
