@@ -2,18 +2,19 @@
 
 <@b.base title="Shop" session=session>
 <#--    <h2> ${session.getAttribute("role")} </h2>-->
-    <table class="table table-striped table-hover">
+    <table id="table" class="table table-striped table-hover">
         <thead style="background-color: #0f3341; color: #ffffff;">
         <#if session.getAttribute("role")?has_content>
             <#if session.getAttribute("role") == "user">
-            <th>Name</th><th>Author</th><th>Price</th><th> </th><th> </th>
+                <th><button id="nameColumn">Name</button></th><th><button id="authorColumn">Author</button></th><th><button id="priceColumn">Price</button></th><th> </th><th> </th>
             <#else>
-                <th>Name</th><th>Author</th><th>Price</th><th>Edit</th><th> </th><th> </th>
+                <th><button id="nameColumn">Name</button></th><th><button id="authorColumn">Author</button></th><th><button id="priceColumn">Price</button></th><th>Edit</th><th> </th><th> </th>
             </#if>
         <#else>
-            <th>Name</th><th>Author</th><th>Price</th>
+            <th><button id="nameColumn">Name</button></th><th><button id="authorColumn">Author</button></th><th><button id="priceColumn">Price</button></th>
         </#if>
         </thead>
+        <tbody>
         <#list books as book>
         <tr>
             <td>${book.name}</td>
@@ -35,7 +36,9 @@
             </#if>
         </tr>
         </#list>
+        </tbody>
     </table>
+    <a id="test"></a>
     <nav aria-label="Page navigation" class="nav justify-content-center">
         <ul class="pagination">
             <#if number != 1>
@@ -46,7 +49,11 @@
             <li class="page-item disabled"><a class="page-link">Previous</a></li>
             </#if>
             <#list pages as page>
+                <#if page == number>
+                <li id="page" class="page-item disabled"><a class="page-link" href="?page=${page}">${page}</a></li>
+                <#else>
                 <li class="page-item"><a class="page-link" href="?page=${page}">${page}</a></li>
+                </#if>
             </#list>
             <#if number != count>
             <li class="page-item"><a class="page-link" href="?page=${number+1}">Next</a></li>
@@ -57,4 +64,5 @@
             </#if>
         </ul>
     </nav>
+    <script src="sort.js"> </script>
 </@b.base>
