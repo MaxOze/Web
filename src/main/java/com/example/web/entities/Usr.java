@@ -1,6 +1,7 @@
 package com.example.web.entities;
 
-import com.example.web.repos.OrderRepo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 
 import javax.persistence.*;
 import java.util.Set;
@@ -19,6 +20,7 @@ public class Usr {
     @ManyToOne
     private Role role_name;
     @OneToMany
+    @JsonIgnoreProperties("user")
     private Set<BookOrder> orders;
 
     public Usr() { }
@@ -75,12 +77,12 @@ public class Usr {
         this.password = password;
     }
 
-    public Role getRole() {
+    public Role getRole_name() {
         return role_name;
     }
 
-    public void setRole(Role role) {
-        this.role_name = role;
+    public void setRole_name(Role role_name) {
+        this.role_name = role_name;
     }
 
     public Set<BookOrder> getOrders() {
