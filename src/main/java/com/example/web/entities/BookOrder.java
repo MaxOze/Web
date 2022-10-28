@@ -1,5 +1,8 @@
 package com.example.web.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -10,6 +13,7 @@ public class BookOrder {
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer order_id;
     @ManyToOne
+    @JsonIgnoreProperties("orders")
     private Usr usr_id;
     @ManyToMany
     private List<Book> books_id;
