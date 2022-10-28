@@ -18,16 +18,18 @@
 </#macro>
 
 <#macro userForm value button>
-    <form method="post" class="form-signup">
+    <form id="form" method="post" class="form-signup" action="/signup" novalidate>
         <div class="form-floating">
                 <input type="text" class="form-control" id="floatingFirstname" name="firstname" value="${value.firstname}">
                 <label for="floatingFirstname">Firstname</label>
+            <small>Error message</small>
         </div>
         <div class="form-floating">
                 <input type="email" class="form-control" id="floatingEmail" name="email" value="${value.email}">
                 <label for="floatingEmail">Email</label>
+                <small>Error message</small>
         </div>
         <#nested>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">${button}</button>
+        <button id="submit" class="w-100 btn btn-lg btn-primary" type="submit">${button}</button>
     </form>
 </#macro>
