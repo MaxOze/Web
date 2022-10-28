@@ -2,8 +2,12 @@ package com.example.web.controllers;
 
 import com.example.web.entities.Book;
 import com.example.web.repos.BookRepo;
+import com.example.web.util.Input;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,15 +20,17 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class BooksController {
     private final BookRepo bookRepo;
+    private String sortBy;
 
     public BooksController(BookRepo bookRepo) {
         this.bookRepo = bookRepo;
+        this.sortBy = "name";
     }
 
     @GetMapping("/shop")
     public String mainPage(@RequestParam Integer page,
                            HttpSession session, Map<String, Object> model) {
-        Pageable paginator = PageRequest.of(page - 1, 5);
+        Pageable paginator = PageRequest.of(page - 1, 5, Sort.Direction.ASC, sortBy);
 
         Iterable<Book> books = bookRepo.findAll(paginator);
 
@@ -64,6 +70,14 @@ public class BooksController {
         }
 
         return "redirect:/shop?page="+page;
+    }
+
+    @PostMapping("/sorting")
+    public ResponseEntity<Iterable<Book>> sorting(@RequestBody Input input) {
+        sortBy = input.getInput();
+        Pageable paginator = PageRequest.of(0, 5, Sort.Direction.ASC, sortBy);
+        Iterable<Book> books = bookRepo.findAll(paginator);
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @GetMapping("/create")
