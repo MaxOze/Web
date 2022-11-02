@@ -22,13 +22,13 @@ body {
 
 
 .form-floating {
-    /*width: 100%;*/
-    /*max-width: 360px;*/
-    /*padding: 15px;*/
-    /*margin: auto;*/
-    margin-bottom: 10px;
+    width: 100%;
+    max-width: 360px;
+    margin-top: 10px;
     padding-bottom: 20px;
     position: relative;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .form-floating label {

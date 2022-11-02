@@ -13,12 +13,12 @@
             <label for="floatingPrice">Price</label>
         </div>
         <#nested>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">${button}</button>
+        <button class="btn btn-lg btn-primary" type="submit">${button}</button>
     </form>
 </#macro>
 
 <#macro userForm value button>
-    <form id="form" method="post" class="form-signup" action="/signup" novalidate>
+    <form id="form" method="post" class="form-signup align-content-center" action="/signup" novalidate>
         <div class="form-floating">
                 <input type="text" class="form-control" id="floatingFirstname" name="firstname" value="${value.firstname}">
                 <label for="floatingFirstname">Firstname</label>
@@ -30,6 +30,8 @@
                 <small>Error message</small>
         </div>
         <#nested>
-        <button id="submit" class="w-100 btn btn-lg btn-primary" type="submit">${button}</button>
+        <button id="submit" class="btn btn-lg btn-primary" type="submit">${button}</button>
     </form>
+    <script src="validator.js"> </script>
+    <script src="uniq.js"> </script>
 </#macro>

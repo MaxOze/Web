@@ -1,7 +1,6 @@
 <#import "parts/base.ftl" as b>
 
 <@b.base title="Shop" session=session>
-<#--    <h2> ${session.getAttribute("role")} </h2>-->
     <table id="table" class="table table-striped table-hover">
         <thead style="background-color: #0f3341; color: #ffffff;">
         <#if session.getAttribute("role")?has_content>
@@ -64,5 +63,7 @@
             </#if>
         </ul>
     </nav>
-    <script src="sort.js"> </script>
+    <script src="sort.js">
+
+    </script>
 </@b.base>
