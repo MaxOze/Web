@@ -3,6 +3,7 @@ package com.example.web.controllers;
 import com.example.web.entities.Book;
 import com.example.web.repos.BookRepo;
 import com.example.web.util.Input;
+import freemarker.template.utility.NullArgumentException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -67,9 +68,11 @@ public class BooksController {
         if (book.isPresent()) {
             cart.add(book.get());
             session.setAttribute("cart", cart);
+
+            return "redirect:/shop?page="+page;
         }
 
-        return "redirect:/shop?page="+page;
+        throw new NullArgumentException();
     }
 
     @PostMapping("/sorting")
@@ -99,12 +102,16 @@ public class BooksController {
     public String addBook(@RequestParam String name,
                           @RequestParam String author,
                           @RequestParam Integer price,
-                          Map<String, Object> model, HttpSession session) {
-        Book book = new Book(name, author, price);
-        bookRepo.save(book);
-        model.put("session", session);
+                          Map<String, Object> model, HttpSession session) throws RuntimeException {
+        if (session.getAttribute("role") != null) {
+            Book book = new Book(name, author, price);
+            bookRepo.save(book);
+            model.put("session", session);
 
-        return "redirect:/shop?page=1";
+            return "redirect:/shop?page=1";
+        }
+
+        throw new RuntimeException();
     }
 
     @GetMapping("/edit")

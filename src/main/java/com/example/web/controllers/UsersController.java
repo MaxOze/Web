@@ -72,7 +72,7 @@ public class UsersController {
 
         model.put("session", session);
 
-        return "user/signin";
+        return "redirect:/signin";
     }
 
     @GetMapping("/signup")
