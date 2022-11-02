@@ -6,8 +6,9 @@ const password = document.getElementById('floatingPassword')
 
 form.addEventListener('submit', e => {
     if(checkInputs() > 0) {
-        e.preventDefault()
+        e.preventDefault();
     }
+    console.log('wtf');
 });
 
 function checkInputs() {

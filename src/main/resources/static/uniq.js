@@ -1,9 +1,12 @@
+const login = document.getElementById('floatingLogin')
+
 $(document).ready(function() {
     $('#floatingLogin').on("input", function(e) {
-        $('#loginMsg').hide();
-        if($('#floatingLogin').val() == null || $('#floatingLogin').val() === "") {
-            $('#loginMsg').show();
-            $("#loginMsg").html("Login is a required field.").css("color", "red");
+        const div = login.parentElement;
+        const message = document.getElementById('loginMsg');
+        if(login.value.trim() == null || login.value.trim() === "") {
+            div.className = 'form-floating error';
+            message.innerText = "Login cannot be empty";
         } else {
             $.ajax({
                 type: 'post',
@@ -13,17 +16,14 @@ $(document).ready(function() {
                 cache: false,
                 statusCode: {
                     500: function(xhr) {
-                        $('#loginMsg').show();
-                        $('#loginMsg').html("Login available.").css("color", "green");
+                        div.className = 'form-floating success';
                     },
                     200: function (xhr) {
-                        $('#loginMsg').show();
-                        $("#loginMsg").html("Login already taken").css("color", "red");
+                        div.className = 'form-floating error';
+                        message.innerText = "Login already taken";
                     }
                 }
             })
         }
     })
 })
-
-// вместо .show сделать как в validator
